@@ -1,3 +1,15 @@
+## CHANGES IN MY VERSION
+
+There is an option called `transition` which should be a 
+function (callback). It takes two parameters `(container, data)`, where
+`container` is the container passed into pjax, and `data` is the data about to
+be replaced into the page (after taking filtering for the fragment,
+if any). 
+
+Also I trigger the `end.pjax` event on the body element in addition to
+the container element when pjax is done. This is to facilitate "global"
+handlers for when the pjax call is complete.
+
 ## pushState + ajax = pjax
 
             .--.

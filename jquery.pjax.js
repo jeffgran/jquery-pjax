@@ -97,17 +97,21 @@ $.pjax = function( options ) {
     data: { _pjax: true },
     type: 'GET',
     dataType: 'html',
-    beforeSend: function(xhr){
+    beforeSend: function(xhr) {
       $container.trigger('start.pjax')
       xhr.setRequestHeader('X-PJAX', 'true')
     },
-    error: function(){
+    error: function(data){
       window.location = options.url
+      //console.log('error')
+      //console.log(data)
     },
     complete: function(){
       $container.trigger('end.pjax')
+      $('body').trigger('end.pjax')
     },
     success: function(data){
+
       if ( options.fragment ) {
         // If they specified a fragment, look for it in the response
         // and pull it out.
@@ -124,7 +128,11 @@ $.pjax = function( options ) {
       }
 
       // Make it happen.
-      $container.html(data)
+      if ( $.isFunction(options.transition) ) {
+        options.transition($container, data)
+      } else {
+        $container.html(data)
+      }
 
       // If there's a <title> tag in the response, use it as
       // the page's title.
@@ -135,7 +143,8 @@ $.pjax = function( options ) {
       var state = {
         pjax: options.container,
         fragment: options.fragment,
-        timeout: options.timeout
+        timeout: options.timeout,
+        transition: options.transition
       }
 
       // If there are extra params, save the complete URL in the state object
@@ -208,19 +217,24 @@ $(window).bind('popstate', function(event){
   if ( initialPop ) return
 
   var state = event.state
-
   if ( state && state.pjax ) {
     var container = state.pjax
-    if ( $(container+'').length )
+    //console.log(state)
+    //console.log(event)
+    if ( $(container+'').length ) {
       $.pjax({
         url: state.url || location.href,
         fragment: state.fragment,
         container: container,
         push: false,
-        timeout: state.timeout
+        timeout: state.timeout,
+        transition: undefined
       })
-    else
+    }
+    else {
+      //console.log('refreshing')
       window.location = location.href
+    }
   }
 })
 

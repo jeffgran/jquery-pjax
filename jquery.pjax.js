@@ -200,7 +200,6 @@ pjax.defaults = {
   },
   complete: function(xhr){
     this.trigger('end.pjax', [xhr, pjax.options])
-      $('body').trigger('end.pjax')
   }
 }
 
